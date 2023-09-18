@@ -4,7 +4,15 @@ from openpyxl.utils.cell import get_column_letter
 
 book = openpyxl.load_workbook('./data/timetable_april.xlsx')
 
-sheet = book['17']
+print('Введите день, на которое вы хотите узнать расписание\n')
+number = int(input())
+
+
+print("Напишите название класса в котором вы учитесь 😉")
+your_class = input()
+
+sheet = book.worksheets[number]
+#sheet = book['17']
 number_rows = sheet.max_row
 number_columns = sheet.max_column
 
@@ -39,6 +47,9 @@ def find_class_subjects(class_cell):
         else:
             print(cell.value)
 
+if number == 1 or number == 2 or number == 3:
+    number += 2
 
-# cell = find_class_cell('8Б')
-# find_class_subjects(cell)
+
+#cell = find_class_cell(your_class)
+#find_class_subjects(cell)
