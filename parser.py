@@ -1,8 +1,12 @@
 import openpyxl
+#import telebot
 from openpyxl.cell import MergedCell
 from openpyxl.utils.cell import get_column_letter
 
-book = openpyxl.load_workbook('./data/timetable_april.xlsx')
+#token =  telebot.TeleBot("6572797075:AAFH_zY6uLZYKLEiGHZTRG8Jdm-ud4tYoDs")
+
+#book = openpyxl.load_workbook('./data/timetable_april.xlsx')
+book = openpyxl.load_workbook('./data/timetable_september.xlsx')
 
 print('Введите день, на которое вы хотите узнать расписание\n')
 number = int(input())
@@ -82,6 +86,7 @@ def find_class_subjects(class_cell):
 
 def create_a_schedule(class_cell):
     return zip(find_serial_numbers(class_cell), find_time_cells(class_cell), find_class_subjects(class_cell))
+
 
 
 cell = find_class_cell(your_class)
