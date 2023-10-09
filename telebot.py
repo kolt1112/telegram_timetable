@@ -1,31 +1,39 @@
-from telegram.ext import MessageHandler, CommandHandler, filters, Updater, Application, ApplicationBuilder, _application
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler, filters
+
+from settings import TOKEN
+import logging
+
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO,
+    filename="logs.log"
+)
 
 
-def start(bot, update):
-    update.message.bot_text("Привет, напиши число на которое хочешь узнать расписание и свой класс.")
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    text = "Привет, напиши число на которое хочешь узнать расписание и свой класс."
+    await context.bot.send_message(chat_id=update.effective_chat.id,
+                                   text=text)
 
 
-def echo(bot, update):
-    update.message.bot_text("sdfdsf" + update.message.text)
+async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    number = update.message.text
+    await context.bot.send_message(chat_id=update.effective_chat.id,
+                                   text=number)
+"""
+async def echo2(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    your_class = update.message.text
+    await context.bot.send_message(chat_id=update.effective_chat.id,
+                                   text=your_class)
 
-updater = ApplicationBuilder().token('6572797075:AAFH_zY6uLZYKLEiGHZTRG8Jdm-ud4tYoDs').build()
+"""
+if __name__ == "__main__":
+    application = ApplicationBuilder().token(TOKEN).build()
 
-#updater = Updater.update_queue('6572797075:AAFH_zY6uLZYKLEiGHZTRG8Jdm-ud4tYoDs')
+    application.add_handler(CommandHandler('start', start))
+    application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), echo))
+#    application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), echo2))
 
-#TOKEN = '6572797075:AAFH_zY6uLZYKLEiGHZTRG8Jdm-ud4tYoDs'
-
-#updater = Updater(token=TOKEN, use_context=True)
-
-#dp = updater.dispatcher
-_application.add_handler(CommandHandler('start', start))
-
-#dp.add_handler(CommandHandler("start", start))
-
-#text_handler = MessageHandler(filters.TEXT, echo)
-
-#dp.add_handler(text_handler)
-_application.run_polling(1.0)
-
-#updater.start_polling()
-
-#updater.idle()
+    application.run_polling()
+#https://docs-python.ru/packages/biblioteka-python-telegram-bot-python/

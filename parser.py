@@ -1,14 +1,13 @@
 import openpyxl
-#import telebot
 from openpyxl.cell import MergedCell
 from openpyxl.utils.cell import get_column_letter
 
-#token =  telebot.TeleBot("6572797075:AAFH_zY6uLZYKLEiGHZTRG8Jdm-ud4tYoDs")
+#from telebot import number, your_class
 
 #book = openpyxl.load_workbook('./data/timetable_april.xlsx')
 book = openpyxl.load_workbook('./data/timetable_september.xlsx')
 
-print('Введите день, на которое вы хотите узнать расписание\n')
+#print('Введите день, на которое вы хотите узнать расписание\n')
 number = int(input())
 #number = 21
 
@@ -17,7 +16,7 @@ if int(number) < 9:
 elif int(number) >= 15:
     number -= 1
 
-print("Напишите название класса в котором вы учитесь")
+#print("Напишите название класса в котором вы учитесь")
 your_class = input()
 #your_class = '8А'
 
