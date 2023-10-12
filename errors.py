@@ -1,0 +1,2 @@
+class WorksheetDoesNotExist(Exception):
+    pass

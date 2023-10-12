@@ -2,28 +2,7 @@ import openpyxl
 from openpyxl.cell import MergedCell
 from openpyxl.utils.cell import get_column_letter
 
-#from telebot import number, your_class
-
-#book = openpyxl.load_workbook('./data/timetable_april.xlsx')
-book = openpyxl.load_workbook('./data/timetable_september.xlsx')
-
-#print('Введите день, на которое вы хотите узнать расписание\n')
-number = int(input())
-#number = 21
-
-if int(number) < 9:
-    number += 1
-elif int(number) >= 15:
-    number -= 1
-
-#print("Напишите название класса в котором вы учитесь")
-your_class = input()
-#your_class = '8А'
-
-sheet = book.worksheets[number]
-# sheet = book['17']
-number_rows = sheet.max_row
-number_columns = sheet.max_column
+from errors import WorksheetDoesNotExist
 
 
 def get_merged_cell_value(sheet, cell):
@@ -31,15 +10,15 @@ def get_merged_cell_value(sheet, cell):
     return sheet.cell(rng[0].min_row, rng[0].min_col).value if len(rng) != 0 else cell.value
 
 
-def find_class_cell(value):
+def find_class_cell(sheet, number_columns, number_rows, value):
     for i in range(number_columns):
         for k in range(number_rows):
             cell = sheet[get_column_letter(i + 1) + str(k + 1)]
             if cell.value and value in str(cell.value):
-                return (cell.column, cell.row)
+                return cell.column, cell.row
 
 
-def find_count_of_subjects(class_cell):
+def find_count_of_subjects(sheet, class_cell):
     count = 0
     for i in range(1, 20):
         if sheet.cell(column=class_cell[0], row=class_cell[1] + i).value is None and count != 0:
@@ -48,7 +27,7 @@ def find_count_of_subjects(class_cell):
     return count
 
 
-def find_serial_numbers(class_cell):
+def find_serial_numbers(sheet, class_cell):
     count = 0
     serial_numbers = []
     for i in range(1, 20):
@@ -61,18 +40,18 @@ def find_serial_numbers(class_cell):
     return tuple(serial_numbers)
 
 
-def find_time_cells(class_cell):
-    time_cells = []
-    for i in range(1, 20):
-        time_cells.append(sheet.cell(column=3, row=class_cell[1] + i).value)
-        if sheet.cell(column=3, row=class_cell[1] + i).value is None:
-            break
-    return tuple(time_cells)
+    def find_time_cells(sheet, class_cell):
+        time_cells = []
+        for i in range(1, 20):
+            time_cells.append(sheet.cell(column=3, row=class_cell[1] + i).value)
+            if sheet.cell(column=3, row=class_cell[1] + i).value is None:
+                break
+        return tuple(time_cells)
 
 
-def find_class_subjects(class_cell):
+def find_class_subjects(sheet, class_cell):
     subjects = []
-    for i in range(1, find_count_of_subjects(class_cell) + 1):
+    for i in range(1, find_count_of_subjects(sheet, class_cell) + 1):
         cell = sheet.cell(column=class_cell[0], row=class_cell[1] + i)
         if isinstance(cell, MergedCell):
             # print(get_merged_cell_value(sheet, cell))
@@ -83,13 +62,38 @@ def find_class_subjects(class_cell):
     return tuple(subjects)
 
 
-def create_a_schedule(class_cell):
-    return zip(find_serial_numbers(class_cell), find_time_cells(class_cell), find_class_subjects(class_cell))
+def create_a_schedule(sheet, class_cell):
+    return zip(find_serial_numbers(sheet, class_cell), find_time_cells(sheet, class_cell),
+               find_class_subjects(sheet, class_cell))
 
 
+book = openpyxl.load_workbook('./data/timetable_september.xlsx')
 
-cell = find_class_cell(your_class)
 
-# answer = create_a_schedule(cell)
-for answer in create_a_schedule(cell):
-    print(f'№{answer[0]} Time: {answer[1]} Subject: {answer[2]}')
+def get_schedule(data, class_name):
+    sheet = book[data]
+    try:
+        number_rows = sheet.max_row
+        number_columns = sheet.max_column
+
+        result = create_a_schedule(sheet, find_class_cell(sheet, number_rows, number_columns, class_name))
+    except KeyError:
+        raise WorksheetDoesNotExist
+
+    return result
+
+
+def main():
+    data = input()
+    class_name = input()
+
+    # for answer in get_schedule(data, class_name):
+    #     print(f'№{answer[0]} Time: {answer[1]} Subject: {answer[2]}')
+
+    text = '\n'.join(
+        f'№{answer[0]} Время: {answer[1]} Предмет: {answer[2]}' for answer in get_schedule(data, class_name))
+    print(text)
+
+
+if __name__ == '__main__':
+    main()
