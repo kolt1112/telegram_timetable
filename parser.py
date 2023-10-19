@@ -40,13 +40,13 @@ def find_serial_numbers(sheet, class_cell):
     return tuple(serial_numbers)
 
 
-    def find_time_cells(sheet, class_cell):
-        time_cells = []
-        for i in range(1, 20):
-            time_cells.append(sheet.cell(column=3, row=class_cell[1] + i).value)
-            if sheet.cell(column=3, row=class_cell[1] + i).value is None:
-                break
-        return tuple(time_cells)
+def find_time_cells(sheet, class_cell):
+    time_cells = []
+    for i in range(1, 20):
+        time_cells.append(sheet.cell(column=3, row=class_cell[1] + i).value)
+        if sheet.cell(column=3, row=class_cell[1] + i).value is None:
+            break
+    return tuple(time_cells)
 
 
 def find_class_subjects(sheet, class_cell):
