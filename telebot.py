@@ -8,19 +8,20 @@ from settings import TOKEN
 import logging
 
 
-formatter = logging.Formatter("%(name)s %(asctime)s %(levelname)s %(message)s")
+formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
 
-fileHandler = logging.FileHandler("logs.log")
+fileHandler = logging.FileHandler("./logs/logs.log")
 fileHandler.setLevel(logging.DEBUG)
 fileHandler.setFormatter(formatter)
-logger.addHandler(fileHandler)
 
 consoleHandler = logging.StreamHandler()
 consoleHandler.setLevel(logging.INFO)
 consoleHandler.setFormatter(formatter)
-logger.addHandler(consoleHandler)
 
+logger.addHandler(consoleHandler)
+logger.addHandler(fileHandler)
 
 DATA_SELECT, CLASS_NAME = range(2)
 
